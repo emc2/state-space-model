@@ -17,6 +17,9 @@ Parameter ScalarEq : Scalar -> Scalar -> Prop.
 (* Complex conjugates *)
 Parameter ScalarConj : Scalar -> Scalar.
 
+(* Order *)
+Parameter ScalarLe : Scalar -> Scalar -> Prop.
+
 (* Extensional equality *)
 Axiom scalar_extensional : forall x y : Scalar, x = y <-> ScalarEq x y.
 
@@ -58,6 +61,9 @@ Proof. apply scalar_recip_morphism. Qed.
 Add Field scalar_field : scalar_field_theory.
 
 (* Conjugate properties *)
+Axiom scalar_conj :
+  forall x : Scalar, ScalarMult x (ScalarConj x) = ScalarMult x x.
+
 Axiom scalar_conj_involution :
   forall x : Scalar, ScalarConj (ScalarConj x) = x.
 
@@ -71,3 +77,22 @@ Axiom scalar_conj_mult :
 
 Axiom scalar_zero_self_conj : ScalarConj ScalarZero = ScalarZero.
 Axiom scalar_one_self_conj : ScalarConj ScalarOne = ScalarOne.
+
+(* Order properties *)
+
+Axiom scalar_ord_reflexive : forall x : Scalar, ScalarLe x x.
+Axiom scalar_ord_antisymmetric :
+  forall x y : Scalar, ScalarLe x y -> ScalarLe y x -> ScalarEq x y.
+Axiom scalar_ord_transitive :
+  forall x y z : Scalar, ScalarLe x y -> ScalarLe y z -> ScalarLe x z.
+
+Axiom scalar_ord_zero_one : ScalarLe ScalarZero ScalarOne.
+
+Definition ScalarPos : forall x : Scalar, ScalarLe ScalarZero x.
+Definition ScalarNeg : forall x : Scalar, ScalarLe x ScalarZero.
+
+Axiom scalar_ord_add1 :
+  forall x y : Scalar, ScalarPos x -> ScalarPos y -> ScalarLt x (ScalarAdd x y).
+
+Axiom scalar_ord_add2 :
+  forall x y : Scalar, ScalarPos x -> ScalarPos y -> ScalarLt y (ScalarAdd x y).
