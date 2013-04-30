@@ -5,8 +5,11 @@ Inductive State : Set :=
   | ScalarProd : Scalar -> State -> State
   | Join : State -> State -> State
   | Meet : State -> State -> State
-  | Conj : State -> State
-  | Null : State.
+  | Conj : State -> State.
+
+(* Null state *)
+Parameter Null : State.
+Axiom null_zero_scalar_prod : forall s : State, ScalarProd ScalarZero s = Null.
 
 (* Inner products *)
 Parameter InnerProd : State -> State -> Scalar.
@@ -21,22 +24,6 @@ Axiom inner_prod_extensional_eq :
 (* Conjugate symmetry *)
 Axiom inner_prod_conj_sym :
   forall x y : State, InnerProd x y = ScalarConj (InnerProd y x).
-
-(* Positive Semidefiniteness *)
-
-(* Zero *)
-Axiom inner_prod_zero2 : forall s : State, InnerProd s Null = ScalarZero.
-
-Lemma inner_prod_zero1 : forall s : State, InnerProd Null s = ScalarZero.
-Proof.
-  intro s.
-  rewrite inner_prod_conj_sym.
-  rewrite inner_prod_zero2.
-  rewrite scalar_zero_self_conj.
-  reflexivity.
-Qed.
-
-(* Non-zero *)
 
 (* Full continuity *)
 
@@ -58,67 +45,57 @@ Proof.
   field.
 Qed.
 
-(* Meet preservation *)
-Axiom inner_prod_meet_preserve :
-  forall s1 s2 s3 s4 : State,
-    InnerProd (Meet s1 s2) (Meet s3 s4) =
-    ScalarMult (ScalarMult (InnerProd s1 s3) (InnerProd s1 s4))
-               (ScalarMult (InnerProd s2 s3) (InnerProd s2 s4)).
+(* Positive Semidefiniteness *)
 
-(* Join preservation *)
-Axiom inner_prod_join_preserve :
-  forall s1 s2 s3 s4 : State,
-    InnerProd (Join s1 s2) (Join s3 s4) =
-    ScalarAdd (ScalarAdd (InnerProd s1 s3) (InnerProd s1 s4))
-              (ScalarAdd (InnerProd s2 s3) (InnerProd s2 s4)).
-
-(* Meet-join preservation *)
-Axiom inner_prod_meet_join :
-  forall s1 s2 s3 s4 : State,
-    InnerProd (Meet s1 s2) (Join s3 s4) =
-    ScalarMult (ScalarAdd (InnerProd s1 s3) (InnerProd s1 s4))
-               (ScalarAdd (InnerProd s2 s3) (InnerProd s2 s4)).
-
-Lemma inner_prod_join_meet :
-  forall s1 s2 s3 s4 : State,
-    InnerProd (Join s1 s2) (Meet s3 s4) =
-    ScalarMult (ScalarAdd (InnerProd s1 s3) (InnerProd s2 s3))
-               (ScalarAdd (InnerProd s1 s4) (InnerProd s2 s4)).
+(* Zero *)
+Lemma inner_prod_zero2 : forall s : State, InnerProd s Null = ScalarZero.
 Proof.
-  intros s1 s2 s3 s4.
+  intro s.
+  erewrite <- null_zero_scalar_prod.
+  rewrite inner_prod_homogenous2.
+  apply scalar_extensional.
+  instantiate (1 := s).
+  field.
+Qed.
+
+Lemma inner_prod_zero1 : forall s : State, InnerProd Null s = ScalarZero.
+Proof.
+  intro s.
+  erewrite <- null_zero_scalar_prod.
+  rewrite inner_prod_homogenous1.
+  apply scalar_extensional.
+  rewrite scalar_zero_self_conj.
+  instantiate (1 := s).
+  field.
+Qed.
+
+(* Non-zero *)
+
+
+(* Meet preservation *)
+Axiom inner_prod_meet2 :
+  forall s s1 s2 : State,
+    InnerProd s (Meet s1 s2) = ScalarMult (InnerProd s s1) (InnerProd s s2).
+
+Lemma inner_prod_meet1 :
+  forall s1 s2 s : State,
+    InnerProd (Meet s1 s2) s = ScalarMult (InnerProd s1 s) (InnerProd s2 s).
+Proof.
+  intros s1 s2 s.
   rewrite inner_prod_conj_sym.
-  rewrite inner_prod_meet_join.
+  rewrite inner_prod_meet2.
   rewrite scalar_conj_mult.
-  rewrite scalar_conj_add.
-  rewrite <- !inner_prod_conj_sym.
-  rewrite scalar_conj_add.
-  rewrite <- !inner_prod_conj_sym.
+  rewrite <- 2! inner_prod_conj_sym.
   apply scalar_extensional.
   field.
 Qed.
 
-Axiom inner_prod_meet_scalar_prod :
-  forall (s1 s2 s3 : State) (a : Scalar),
-    InnerProd (ScalarProd a s1) (Meet s2 s3) =
-      ScalarMult (InnerProd (ScalarProd a s1) s2)
-                 (InnerProd (ScalarProd a s1) s3).
-
-Axiom inner_prod_join_scalar_prod :
-  forall (s1 s2 s3 : State) (a : Scalar),
-    InnerProd (ScalarProd a s1) (Join s2 s3) =
-      ScalarAdd (InnerProd (ScalarProd a s1) s2)
-                (InnerProd (ScalarProd a s1) s3).
-
-Axiom inner_prod_meet_conj :
-  forall s1 s2 s3 : State,
-    InnerProd (Conj s1) (Meet s2 s3) =
-      ScalarMult (InnerProd (Conj s1) s2) (InnerProd (Conj s1) s3).
-
-Axiom inner_prod_join_conj :
-  forall s1 s2 s3 : State,
-    InnerProd (Conj s1) (Join s2 s3) =
-      ScalarAdd (InnerProd (Conj s1) s2) (InnerProd (Conj s1) s3).
-
+(* Join preservation *)
+Axiom inner_prod_join :
+  forall s1 s2 s3 s4 : State,
+    InnerProd (Join s1 s2) (Join s3 s4) =
+    ScalarAdd (ScalarAdd (InnerProd s1 s3) (InnerProd s1 s4))
+              (ScalarAdd (InnerProd s2 s3) (InnerProd s2 s4)).
 
 (* Basic identities *)
 
@@ -134,6 +111,17 @@ Proof.
   field.
 Qed.
 
+(* S meet _|_ = _|_ *)
+Lemma meet_null : forall s : State, Meet s Null = Null.
+Proof.
+  intro s.
+  apply inner_prod_extensional_eq.
+  intro s0.
+  rewrite inner_prod_meet2, inner_prod_zero2.
+  apply scalar_extensional.
+  field.
+Qed.
+
 (* S1 meet S2 = S2 meet S1 *)
 Lemma meet_commute : forall s1 s2 : State, Meet s1 s2 = Meet s2 s1.
 Proof.
@@ -141,21 +129,33 @@ Proof.
   apply inner_prod_extensional_eq.
   intro s0.
   destruct s0.
-  rewrite !inner_prod_meet_scalar_prod.
+  rewrite !inner_prod_homogenous1, !inner_prod_meet2.
   apply scalar_extensional.
   field.
-  rewrite !inner_prod_join_meet.
+  rewrite !inner_prod_meet2.
   apply scalar_extensional.
   field.
-  rewrite !inner_prod_meet_preserve.
+  rewrite !inner_prod_meet1, !inner_prod_meet2.
   apply scalar_extensional.
   field.
-  rewrite !inner_prod_meet_conj.
+  rewrite !inner_prod_meet2.
   apply scalar_extensional.
   field.
-  rewrite !inner_prod_zero1.
-  reflexivity.
 Qed.
+
+(* S1 meet (S2 meet S3) = (S1 meet S2) meet S3 *)
+Lemma meet_assoc :
+  forall s1 s2 s3 : State, Meet S1 (Meet S2 S3) = Meet (Meet S1 S2) S3.
+
+(* S join _|_ = S *)
+Lemma join_null2 : forall s : State, Join s Null = Null.
+Proof.
+  intro s.
+  apply inner_prod_extensional_eq.
+  intro s0.
+  rewrite inner_prod_meet2, inner_prod_zero2.
+  apply scalar_extensional.
+  field.
 
 (* S1 join S2 = S2 join S1 *)
 Lemma join_commute : forall s1 s2 : State, Join s1 s2 = Join s2 s1.
@@ -163,21 +163,21 @@ Proof.
   intros s1 s2.
   apply inner_prod_extensional_eq.
   intro s0.
-  destruct s0.
-  rewrite !inner_prod_join_scalar_prod.
-  apply scalar_extensional.
-  field.
-  rewrite !inner_prod_join_preserve.
-  apply scalar_extensional.
-  field.
-  rewrite !inner_prod_meet_join.
-  apply scalar_extensional.
-  field.
-  rewrite !inner_prod_join_conj.
-  apply scalar_extensional.
-  field.
-  rewrite !inner_prod_zero1.
+  induction s0.
+  rewrite !inner_prod_homogenous1.
+  rewrite IHs0.
   reflexivity.
+  rewrite !inner_prod_join.
+  apply scalar_extensional.
+  field.
+  rewrite !inner_prod_meet1.
+  rewrite IHs0_1, IHs0_2.
+  reflexivity.
+  
+  rewrite !inner_prod_join_preserve; apply scalar_extensional; field.
+  rewrite !inner_prod_meet_join; apply scalar_extensional; field.
+  rewrite !inner_prod_join_conj; apply scalar_extensional; field.
+  rewrite !inner_prod_zero1; reflexivity.
 Qed.
 
 (* (S1 meet S2) meet S3 = S1 meet (S2 meet S3) *)

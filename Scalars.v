@@ -88,11 +88,10 @@ Axiom scalar_ord_transitive :
 
 Axiom scalar_ord_zero_one : ScalarLe ScalarZero ScalarOne.
 
-Definition ScalarPos : forall x : Scalar, ScalarLe ScalarZero x.
-Definition ScalarNeg : forall x : Scalar, ScalarLe x ScalarZero.
+Definition ScalarPos (x : Scalar) := ScalarLe ScalarZero x.
 
 Axiom scalar_ord_add1 :
-  forall x y : Scalar, ScalarPos x -> ScalarPos y -> ScalarLt x (ScalarAdd x y).
+  forall x y : Scalar, ScalarPos x -> ScalarPos y -> ScalarLe x (ScalarAdd x y).
 
 Axiom scalar_ord_add2 :
-  forall x y : Scalar, ScalarPos x -> ScalarPos y -> ScalarLt y (ScalarAdd x y).
+  forall x y : Scalar, ScalarPos x -> ScalarPos y -> ScalarLe y (ScalarAdd x y).
