@@ -111,6 +111,20 @@ Proof.
   field.
 Qed.
 
+(* a S meet b S = (ab)S *)
+Lemma meet_scalar_prod :
+  forall (s : State) (a b : Scalar),
+    Meet (ScalarProd a s) (ScalarProd b s) =
+    ScalarProd (ScalarMult a b) (Meet s s).
+Proof.
+  intros s a b.
+  apply inner_prod_extensional_eq.
+  intro s0.
+  rewrite inner_prod_meet2, !inner_prod_homogenous2, inner_prod_meet2.
+  apply scalar_extensional.
+  field.
+Qed.
+
 (* S meet _|_ = _|_ *)
 Lemma meet_null : forall s : State, Meet s Null = Null.
 Proof.
@@ -128,16 +142,6 @@ Proof.
   intros s1 s2.
   apply inner_prod_extensional_eq.
   intro s0.
-  destruct s0.
-  rewrite !inner_prod_homogenous1, !inner_prod_meet2.
-  apply scalar_extensional.
-  field.
-  rewrite !inner_prod_meet2.
-  apply scalar_extensional.
-  field.
-  rewrite !inner_prod_meet1, !inner_prod_meet2.
-  apply scalar_extensional.
-  field.
   rewrite !inner_prod_meet2.
   apply scalar_extensional.
   field.
@@ -145,7 +149,15 @@ Qed.
 
 (* S1 meet (S2 meet S3) = (S1 meet S2) meet S3 *)
 Lemma meet_assoc :
-  forall s1 s2 s3 : State, Meet S1 (Meet S2 S3) = Meet (Meet S1 S2) S3.
+  forall s1 s2 s3 : State, Meet s1 (Meet s2 s3) = Meet (Meet s1 s2) s3.
+Proof.
+  intros s1 s2 s3.
+  apply inner_prod_extensional_eq.
+  intro s0.
+  rewrite !inner_prod_meet2.
+  apply scalar_extensional.
+  field.
+Qed.
 
 (* S join _|_ = S *)
 Lemma join_null2 : forall s : State, Join s Null = Null.
@@ -180,14 +192,6 @@ Proof.
   rewrite !inner_prod_zero1; reflexivity.
 Qed.
 
-(* (S1 meet S2) meet S3 = S1 meet (S2 meet S3) *)
-(*
-Lemma meet_assoc : forall s1 s2 s3 : State,
-  Meet (Meet s1 s2) s3 = Meet s1 (Meet s2 s3).
-Proof.
-Qed.
-*)
-
 (*
 Lemma null_self_conj : forall s : State, Conj Null = Null.
 Proof.
@@ -200,3 +204,15 @@ Proof.
   reflexivity.
 Qed.
 *)
+
+Definition Orthogonal (s1 s2 : State) : Prop :=
+  InnerProd s1 s2 = ScalarZero.
+
+Definition Normal (s : State) : Prop :=
+  InnerProd s s = ScalarOne
+
+Definition Orthonormal (s1 s2 : State) : Prop :=
+  Normal s1 /\ Normal s2 /\ Orthogonal s1 s2.
+
+Definition Degenerate (s : State) : Prop :=
+  ~ s = Null /\ InnerProd s s = ScalarZero.
