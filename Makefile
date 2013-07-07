@@ -1,4 +1,4 @@
-MODULES := Base Equiv Order Complex
+MODULES := Equiv Order Complex ComplexTheorems AbelianGroup AbelianGroupTheorems Field Scalar Vector State InnerProd
 VS      := $(MODULES:%=Lib/%.v)
 
 .PHONY: coq clean
