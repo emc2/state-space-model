@@ -1,4 +1,4 @@
-MODULES := Base Equiv
+MODULES := Base Equiv Order
 VS      := $(MODULES:%=Lib/%.v)
 
 .PHONY: coq clean
