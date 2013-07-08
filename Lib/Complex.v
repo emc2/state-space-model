@@ -1,12 +1,10 @@
-Require Import Lib.Equiv.
+Module Type COMPLEX.
+  (* Most basic definitions for complex conjugates.  True complex
+   * numbers require ring or field axioms.
+   *)
+  Parameter T : Type.
+  Parameter conj : T -> T.
 
-(* Most basic definitions for complex conjugates.  True complex
- * numbers require ring or field axioms.
- *)
-Class ComplexOp A := conj : A -> A.
-
-Class Complex A := {
-  complex_equiv :> Equiv A;
-  complex_op :> ComplexOp A;
-  involution : forall x : A, conj (conj x) == x
-}.
+  Axiom involution : forall x : T, conj (conj x) = x.
+  Axiom conj_ext : forall x y : T, conj x = conj y -> x = y.
+End COMPLEX.
