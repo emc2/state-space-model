@@ -1,22 +1,18 @@
-Require Import Lib.Base Lib.Equiv.
+Module Type ORDER.
+  Parameter T : Type.
+  Parameter leq : T -> T -> Prop.
 
-Class Antisymmetric {A} (r : A -> A -> Prop) (eq : A -> A -> Prop) :=
-  antisym : forall a b, r a b -> r b a -> eq a b.
+  Definition lt (x y : T) := leq x y /\ not (x = y).
+  Definition geq (x y : T) := not (lt x y).
+  Definition gt (x y : T) := not (leq x y).
 
-Class OrderOp A := le : A -> A -> Prop.
+  Infix "<=" := leq (at level 70, no associativity).
+  Infix "<" := lt (at level 70, no associativity).
+  Infix ">=" := geq (at level 70, no associativity).
+  Infix ">" := gt (at level 70, no associativity).
 
-Infix "<=" := le (at level 70, no associativity).
-
-Class PartialOrder A := {
-  order_equiv :> Equiv A;
-  order_op :> OrderOp A;
-  order_refl :> Reflexive le;
-  order_trans :> Transitive le;
-  order_antisymm :> Antisymmetric le eq;
-  eq_sub_ord : forall x y : A, x == y -> x <= y
-}.
-
-Class TotalOrder A := {
-  partial_ord :> PartialOrder A;
-  total_ord : forall x y : A, x <= y \/ y <= x
-}.
+  Axiom eq_sub_order : forall x y : T, x = y -> x <= y.
+  Axiom order_refl : forall x : T, x <= x.
+  Axiom order_trans : forall x y z : T, x <= y -> y <= z -> x <= z.
+  Axiom order_antisym : forall x y : T, x <= y -> y <= x -> x = y.
+End ORDER.

@@ -1,12 +1,10 @@
-Require Import Lib.Base.
+Module Type EQUIV.
+  Parameter T : Type.
+  Parameter equiv : T -> T -> Prop.
 
-Class EquivOp A := eq : A -> A -> Prop.
+  Infix "==" := eq (at level 70, no associativity).
 
-Class Equiv A := {
-  equiv_op :> EquivOp A;
-  equiv_refl :> Reflexive eq;
-  equiv_comm :> Commutative eq;
-  equiv_trans :> Transitive eq
-}.
-
-Infix "==" := eq (at level 70, no associativity).
+  Axiom equiv_refl : forall x : T, x == x.
+  Axiom equiv_comm : forall x y : T, x == y -> y == x.
+  Axiom equiv_trans : forall x y z : T, x == y -> y == z -> x == z.
+End EQUIV.
