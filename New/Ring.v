@@ -6,9 +6,15 @@ Class SemiRingOps A := {
   zero : A;
   one : A;
   add : A -> A -> A;
+  mul : A -> A -> A
+}.
+
+Class RingOps A := {
+  rops :> SemiRingOps A;
   sub : A -> A -> A;
-  mul : A -> A -> A;
-  neg : A -> A
+  neg : A -> A;
+  sub_def : forall x y, sub x y == add x (neg y);
+  sub_zero : forall x, sub x x == zero
 }.
 
 Notation "0" := zero.
@@ -17,13 +23,6 @@ Notation "x + y" := (add x y).
 Notation "x - y" := (sub x y).
 Notation "x * y" := (mul x y).
 Notation "- x" := (neg x).
-Infix "==" := equiv_op (at level 70, no associativity).
-
-Class RingOps A := {
-  rops :> SemiRingOps A;
-  sub_def : forall x y, x - y == x + (-y);
-  sub_zero : forall x, x - x == 0
-}.
 
 Class SemiRingNoAssoc A {rops : SemiRingOps A} := {
   add_extensional :
@@ -32,7 +31,10 @@ Class SemiRingNoAssoc A {rops : SemiRingOps A} := {
     forall x1 x2 y1 y2: A, x1 == x2 -> y1 == y2 -> x1 * y1 == x2 * y2;
   add_comm : Commutative add equiv_op;
   mul_comm : Commutative add equiv_op;
-  add_mul_dist : Distributive add mul equiv_op
+  add_mul_dist : Distributive add mul equiv_op;
+  add_zero : forall a : A, a + 0 == a;
+  mul_zero : forall a : A, a * 0 == 0;
+  mul_one : forall a : A, a * 1 == a
 }.
 
 Class RingNoAssoc A {rops : RingOps A} := {
