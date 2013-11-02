@@ -6,6 +6,7 @@ Class ComplexOps A := {
   complex_conj : A -> A
 }.
 
+(* Unorthodox notation *)
 Notation "~ x" := (complex_conj x).
 
 Class Complex A {cops : ComplexOps A} {rops : RingOps A} := {
