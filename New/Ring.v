@@ -48,6 +48,6 @@ Class SemiRing A {rops : SemiRingOps A} := {
 }.
 
 Class Ring A {rops : RingOps A} := {
-  semiring :> SemiRing A;
+  semiring_r :> SemiRing A;
   ring_noassoc :> RingNoAssoc A
 }.
