@@ -80,12 +80,7 @@ endif
 #                    #
 ######################
 
-VFILES:=Equiv.v\
-  Order.v\
-  Properties.v\
-  Ring.v\
-  Field.v\
-  Complex.v
+VFILES:=Equiv.v Order.v Properties.v Ring.v Field.v Complex.v
 
 -include $(addsuffix .d,$(VFILES))
 .SECONDARY: $(addsuffix .d,$(VFILES))
