@@ -28,3 +28,4 @@ Class PositiveDefinite {A} {po : PartialOrder A} (op : A -> A) (zero : A) := {
   pos_semidef_pd :> PositiveSemiDefinite op zero;
   zero_exclusive : forall a : A, op a == zero -> a == zero
 }.
+
