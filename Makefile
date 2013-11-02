@@ -80,7 +80,7 @@ endif
 #                    #
 ######################
 
-VFILES:=Scalars.v
+VFILES:=Scalars.v New/Properties.v New/Equiv.v New/Order.v New/Ring.v New/Field.v New/Complex.v
 
 -include $(addsuffix .d,$(VFILES))
 .SECONDARY: $(addsuffix .d,$(VFILES))
@@ -104,7 +104,7 @@ endif
 #                                     #
 #######################################
 
-all: ./New $(VOFILES)
+all: $(VOFILES)
 
 spec: $(VIFILES)
 
@@ -139,15 +139,6 @@ beautify: $(VFILES:=.beautified)
 	@echo 'If there were a problem, execute "for file in $$(find . -name \*.v.old -print); do mv $${file} $${file%.old}; done" in your shell/'
 
 .PHONY: all opt byte archclean clean install userinstall depend html validate ./New
-
-###################
-#                 #
-# Subdirectories. #
-#                 #
-###################
-
-./New:
-	cd ./New ; $(MAKE) all
 
 ####################
 #                  #
