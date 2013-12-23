@@ -8,6 +8,7 @@ Require Import New.Order.
  * construction, but don't necessarily define i.
  *)
 Class ScalarOps A := {
+  equiv :> Equiv A;
   pord :> PartialOrder A;
   cops :> ComplexOps A;
   fops :> FieldOps A

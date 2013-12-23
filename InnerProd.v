@@ -21,7 +21,7 @@ Class InnerProd E S {scops : ScalarOps S} {elem_sops : StateOps E S}
   positive : forall s : E, 0 <= <| s | s |>;
   strict : <| null | null |> == 0;
   inner_prod_conj : forall s1 s2 : E, <| ~s1 | ~s2 |> == ~<| s2 | s1 |>;
-  inner_prod_right_homogenous :
+  inner_prod_right_homogeneous :
     forall (s1 s2 : E) (a : S),
       <| s1 | scalar_prod a s2 |> == a * <| s2 | s1 |>
 }.

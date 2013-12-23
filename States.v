@@ -4,7 +4,8 @@ Require Import New.Complex.
 Require Import New.Field.
 Require Import Scalars.
 
-Class StateOps E S {scalar_cops : ComplexOps S} {scalar_fops : FieldOps S} := {
+Class StateOps E S {scalar_equiv : Equiv S} {scalar_cops : ComplexOps S}
+                   {scalar_fops : FieldOps S} := {
   equiv :> Equiv E;
   cops :> ComplexOps E;
   null : E;
@@ -14,7 +15,7 @@ Class StateOps E S {scalar_cops : ComplexOps S} {scalar_fops : FieldOps S} := {
 }.
 
 (* All properties of states will be theorems *)
-Class States E S {sops : ScalarOps S}
+Class States E S {scalar_equiv : Equiv S} {sops : ScalarOps S}
                  {state_ops : StateOps E S} := {
   complex_st :> Complex E
 }.
