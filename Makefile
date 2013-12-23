@@ -80,7 +80,7 @@ endif
 #                    #
 ######################
 
-VFILES:=Scalars.v States.v InnerProd.v StateSpace.v New/Properties.v New/Equiv.v New/Order.v New/Ring.v New/Field.v New/Complex.v
+VFILES:=Scalars.v States.v InnerProd.v InnerProdTheorems.v StateSpace.v New/Properties.v New/Equiv.v New/Order.v New/Ring.v New/Field.v New/Complex.v
 
 -include $(addsuffix .d,$(VFILES))
 .SECONDARY: $(addsuffix .d,$(VFILES))

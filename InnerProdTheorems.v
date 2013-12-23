@@ -33,10 +33,11 @@ Proof.
   generalize (<| s2 | s1 |>).
   intro s.
   apply equiv_trans with ((~s) * (~a)).
-  admit.
+  apply conj_mul.
   apply mul_comm.
   apply mul_extensional.
   apply equiv_refl.
   apply equiv_sym.
   apply conjugate_sym.
+Qed.
 End InnerProdTheorems.
