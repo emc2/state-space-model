@@ -7,18 +7,12 @@ Require Import New.Ring.
 Require Import Scalars.
 Require Import States.
 Require Import InnerProd.
-(*
-Parameter Scalar : Type.
-Parameter State : Type.
-Parameter scalarops : ScalarOps S.
-Parameter stateops : StateOps State Scalar.
-Parameter innerprodop : InnerProdOp State Scalar.
-Parameter innerprod : InnerProd State Scalar
-*)
-Theorem inner_prod_left_homogeneous Scalar State {scalarops : ScalarOps Scalar}
-                                                 {stateops : StateOps State Scalar}
-                                                 {innerprodop : InnerProdOp State Scalar}
-                                                 {innerprod : InnerProd State Scalar} :
+
+Theorem inner_prod_left_homogeneous Scalar State
+  {scalarops : ScalarOps Scalar}
+  {stateops : StateOps State Scalar}
+  {innerprodop : InnerProdOp State Scalar}
+  {innerprod : InnerProd State Scalar} :
   forall (s1 s2 : State) (a : Scalar),
     <| scalar_prod a s1 | s2 |> == ((~ a) * <| s1 | s2 |>).
 Proof.
@@ -40,4 +34,5 @@ Proof.
   apply equiv_sym.
   apply conjugate_sym.
 Qed.
+
 End InnerProdTheorems.

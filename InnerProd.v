@@ -13,13 +13,15 @@ Class InnerProdOp E S := {
 
 Notation "<| x | y |>" := (inner_prod x y).
 
-Class InnerProd E S {scops : ScalarOps S} {elem_sops : StateOps E S}
-                    {inner_prod_ops : InnerProdOp E S} := {
+Class InnerProd E S
+  {scops : ScalarOps S}
+  {elem_sops : StateOps E S}
+  {inner_prod_ops : InnerProdOp E S} := {
   scalars_ip :> Scalars S;
   states_ip :> States E S;
   conjugate_sym : forall s1 s2 : E, <| s1 | s2 |> == ~<| s2 | s1 |>;
   positive : forall s : E, 0 <= <| s | s |>;
-  strict : <| null | null |> == 0;
+  inner_prod_left_strict : forall s : E, <| s | null |> == 0;
   inner_prod_conj : forall s1 s2 : E, <| ~s1 | ~s2 |> == ~<| s2 | s1 |>;
   inner_prod_right_homogeneous :
     forall (s1 s2 : E) (a : S),

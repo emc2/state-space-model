@@ -8,7 +8,8 @@ Class SemiRingOps A := {
   mul : A -> A -> A
 }.
 
-Class RingOps A {equiv : Equiv A} := {
+Class RingOps A
+  {equiv : Equiv A} := {
   rops :> SemiRingOps A;
   sub : A -> A -> A;
   neg : A -> A;
@@ -23,7 +24,9 @@ Notation "x - y" := (sub x y).
 Notation "x * y" := (mul x y).
 Notation "- x" := (neg x).
 
-Class SemiRingNoAssoc A {equiv : Equiv A} {rops : SemiRingOps A} := {
+Class SemiRingNoAssoc A
+  {equiv : Equiv A}
+  {rops : SemiRingOps A} := {
   add_extensional :
     forall x1 x2 y1 y2 : A, x1 == x2 -> y1 == y2 -> x1 + y1 == x2 + y2;
   mul_extensional :
@@ -36,18 +39,24 @@ Class SemiRingNoAssoc A {equiv : Equiv A} {rops : SemiRingOps A} := {
   mul_one : forall a : A, a * 1 == a
 }.
 
-Class RingNoAssoc A {equiv : Equiv A} {rops : RingOps A} := {
+Class RingNoAssoc A
+  {equiv : Equiv A}
+  {rops : RingOps A} := {
   semiring_no_assoc_r :> SemiRingNoAssoc A;
   neg_add_inv : forall a : A, (- a) + a == 0
 }.
 
-Class SemiRing A {equiv : Equiv A} {rops : SemiRingOps A} := {
+Class SemiRing A
+  {equiv : Equiv A}
+  {rops : SemiRingOps A} := {
   semiring_no_assoc_s :> SemiRingNoAssoc A;
   add_assoc : Associative add equiv_op;
   mul_assoc : Associative add equiv_op
 }.
 
-Class Ring A {equiv : Equiv A} {rops : RingOps A} := {
+Class Ring A
+  {equiv : Equiv A}
+  {rops : RingOps A} := {
   semiring_r :> SemiRing A;
   ring_noassoc :> RingNoAssoc A
 }.
