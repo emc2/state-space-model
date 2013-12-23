@@ -1,4 +1,3 @@
-Require Import New.Properties.
 Require Import New.Equiv.
 Require Import New.Ring.
 
@@ -21,7 +20,7 @@ Class ComplexRing A
   {cops : ComplexOps A}
   {rops : RingOps A} := {
   complex_cr :> Complex A;
-  zero_self_conq : (~ 0) == 0;
+  zero_self_conj : (~ 0) == 0;
   conj_sum : forall a b : A, (~(a + b)) == (~a) + (~b);
   conj_mul : forall a b : A, (~(a * b)) == (~b) * (~a)
 }.

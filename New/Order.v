@@ -1,4 +1,3 @@
-Require Import New.Properties.
 Require Import New.Equiv.
 
 Class OrderOp A := le : A -> A -> Prop.

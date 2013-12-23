@@ -1,5 +1,3 @@
-Require Import New.Properties.
-
 Class EquivOp A := eq : A -> A -> Prop.
 
 Infix "==" := eq (at level 70, no associativity).

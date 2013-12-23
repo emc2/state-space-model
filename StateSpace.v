@@ -1,4 +1,3 @@
-Require Import New.Properties.
 Require Import New.Equiv.
 Require Import New.Complex.
 Require Import New.Ring.

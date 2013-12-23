@@ -1,4 +1,3 @@
-Require Import New.Properties.
 Require Import New.Equiv.
 
 Class SemiRingOps A := {
@@ -50,8 +49,8 @@ Class SemiRing A
   {equiv : Equiv A}
   {rops : SemiRingOps A} := {
   semiring_no_assoc_s :> SemiRingNoAssoc A;
-  add_assoc : Associative add equiv_op;
-  mul_assoc : Associative add equiv_op
+  add_assoc : forall a b c : A, a + (b + c) == (a + b) + c;
+  mul_assoc : forall a b c : A, a + (b * c) == (a * b) * c
 }.
 
 Class Ring A

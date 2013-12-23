@@ -1,4 +1,3 @@
-Require Import New.Properties.
 Require Import New.Equiv.
 Require Import New.Complex.
 Require Import New.Ring.
@@ -19,9 +18,9 @@ Class InnerProd E S
   {inner_prod_ops : InnerProdOp E S} := {
   scalars_ip :> Scalars S;
   states_ip :> States E S;
-  conjugate_sym : forall s1 s2 : E, <| s1 | s2 |> == ~<| s2 | s1 |>;
-  positive : forall s : E, 0 <= <| s | s |>;
-  inner_prod_left_strict : forall s : E, <| s | null |> == 0;
+  inner_prod_conj_sym : forall s1 s2 : E, <| s1 | s2 |> == ~<| s2 | s1 |>;
+  inner_prod_pos : forall s : E, 0 <= <| s | s |>;
+  inner_prod_right_strict : forall s : E, <| s | null |> == 0;
   inner_prod_conj : forall s1 s2 : E, <| ~s1 | ~s2 |> == ~<| s2 | s1 |>;
   inner_prod_right_homogeneous :
     forall (s1 s2 : E) (a : S),
