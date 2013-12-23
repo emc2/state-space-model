@@ -14,7 +14,7 @@ Class StateOps E S {scalar_cops : ComplexOps S} {scalar_fops : FieldOps S} := {
 }.
 
 (* All properties of states will be theorems *)
-Class States E S {scalar_cops : ComplexOps S} {scalar_fops : FieldOps S}
-                 {elem_cops : ComplexOps E} {state_ops : StateOps E S} := {
+Class States E S {sops : ScalarOps S}
+                 {state_ops : StateOps E S} := {
   complex_st :> Complex E
 }.
