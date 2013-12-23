@@ -13,7 +13,7 @@ Notation "/ x" := (recip x).
 
 Class FieldAxioms A {equiv : Equiv A} {fops : FieldOps A} := {
   div_def : forall x y, div x y == mul x (recip y);
-  recip_mul_inv : forall a : A, (/ a) * a = 1
+  recip_mul_inv : forall a : A, (/ a) * a == 1
 }.
 
 Class FieldNoAssoc A {equiv : Equiv A} {fops : FieldOps A} := {
