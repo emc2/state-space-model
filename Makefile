@@ -80,7 +80,7 @@ endif
 #                    #
 ######################
 
-VFILES:=Scalars.v States.v New/Properties.v New/Equiv.v New/Order.v New/Ring.v New/Field.v New/Complex.v
+VFILES:=Scalars.v States.v InnerProd.v New/Properties.v New/Equiv.v New/Order.v New/Ring.v New/Field.v New/Complex.v
 
 -include $(addsuffix .d,$(VFILES))
 .SECONDARY: $(addsuffix .d,$(VFILES))
@@ -172,7 +172,6 @@ clean:
 	rm -f $(VOFILES) $(VIFILES) $(GFILES) $(VFILES:.v=.v.d) $(VFILES:=.beautified) $(VFILES:=.old)
 	rm -f all.ps all-gal.ps all.pdf all-gal.pdf all.glob $(VFILES:.v=.glob) $(VFILES:.v=.tex) $(VFILES:.v=.g.tex) all-mli.tex
 	- rm -rf html mlihtml
-	(cd ./New ; $(MAKE) clean)
 
 archclean:
 	rm -f *.cmx *.o
