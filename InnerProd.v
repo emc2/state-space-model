@@ -15,7 +15,6 @@ Notation "<| x | y |>" := (inner_prod x y).
 
 Class InnerProd E S {scops : ScalarOps S} {elem_sops : StateOps E S}
                     {inner_prod_ops : InnerProdOp E S} := {
-  ipop :> InnerProdOp E S;
   scalars_ip :> Scalars S;
   states_ip :> States E S;
   conjugate_sym : forall s1 s2 : E, <| s1 | s2 |> == ~<| s2 | s1 |>;
