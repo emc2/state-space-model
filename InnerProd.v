@@ -24,5 +24,7 @@ Class InnerProd E S
   inner_prod_conj : forall s1 s2 : E, <| ~s1 | ~s2 |> == ~<| s2 | s1 |>;
   inner_prod_right_homogeneous :
     forall (s1 s2 : E) (a : S),
-      <| s1 | scalar_prod a s2 |> == a * <| s1 | s2 |>
+      <| s1 | scalar_prod a s2 |> == a * <| s1 | s2 |>;
+  inner_prod_right_meet :
+    forall (s s1 s2 : E), <| s | meet s1 s2 |> == <| s | s1 |> * <| s | s2 |>
 }.

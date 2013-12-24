@@ -58,4 +58,28 @@ Proof.
   apply inner_prod_right_strict.
 Qed.
 
+Theorem inner_prod_left_meet Scalar State
+  {scalarops : ScalarOps Scalar}
+  {stateops : StateOps State Scalar}
+  {innerprodop : InnerProdOp State Scalar}
+  {innerprod : InnerProd State Scalar} :
+  forall (s s1 s2 : State), <| meet s1 s2 | s |> == <| s1 | s |> * <| s2 | s |>.
+Proof.
+  intros.
+  apply equiv_trans with (~ <| s | meet s1 s2 |>).
+  apply inner_prod_conj_sym.
+  apply equiv_trans with (~(<| s | s1 |> * <| s | s2 |>)).
+  cut (<| s | meet s1 s2 |> == <| s | s1 |> * <| s | s2 |>).
+  apply conj_ext.
+  apply inner_prod_right_meet.
+  apply equiv_trans with ((~<| s | s2 |>) * (~<| s | s1 |>)).
+  apply conj_mul.
+  apply equiv_sym.
+  apply equiv_trans with ((~<| s | s1 |>) * (~<| s | s2 |>)).
+  apply mul_extensional.
+  apply inner_prod_conj_sym.
+  apply inner_prod_conj_sym.
+  apply mul_comm.
+Qed.
+
 End InnerProdTheorems.
