@@ -7,6 +7,7 @@ Require Import Scalars.
 Require Import States.
 Require Import InnerProd.
 
+(* Left homogeneity from right homogeneity and conjugate symmetry *)
 Theorem inner_prod_left_homogeneous Scalar State
   {scalarops : ScalarOps Scalar}
   {stateops : StateOps State Scalar}
@@ -34,6 +35,7 @@ Proof.
   apply inner_prod_conj_sym.
 Qed.
 
+(* Left strictness from right strictness and conjugate symmetry *)
 Theorem inner_prod_left_strict Scalar State
   {scalarops : ScalarOps Scalar}
   {stateops : StateOps State Scalar}
@@ -58,6 +60,7 @@ Proof.
   apply inner_prod_right_strict.
 Qed.
 
+(* Left meet-multiply correspondance from right meet and conjugate symmetry *)
 Theorem inner_prod_left_meet Scalar State
   {scalarops : ScalarOps Scalar}
   {stateops : StateOps State Scalar}
@@ -80,6 +83,79 @@ Proof.
   apply inner_prod_conj_sym.
   apply inner_prod_conj_sym.
   apply mul_comm.
+Qed.
+
+Theorem inner_prod_meet_join Scalar State
+  {scalarops : ScalarOps Scalar}
+  {stateops : StateOps State Scalar}
+  {innerprodop : InnerProdOp State Scalar}
+  {innerprod : InnerProd State Scalar} :
+  forall s1 s2 s3 s4 : State,
+    <| meet s1 s2 | join s3 s4 |> ==
+    (<| s1 | s3 |> + <| s1 | s4 |>) * (<| s2 | s3 |> + <| s2 | s4 |>).
+Proof.
+  intros.
+  apply equiv_trans with (~<| join s3 s4 | meet s1 s2 |>).
+  apply inner_prod_conj_sym.
+  apply equiv_trans with (~((<| s3 | s1 |> + <| s4 | s1 |>) *
+                           (<|s3 | s2 |> + <| s4 | s2 |>))).
+  apply conj_ext.
+  apply equiv_trans with (<| join s3 s4 | meet s1 s2 |>).
+  apply equiv_sym.
+  apply conj_inv.
+  apply equiv_trans with ((<| s3 | s1 |> + <| s4 | s1 |>) *
+                          (<| s3 | s2 |> + <| s4 | s2 |>)).
+  apply inner_prod_join_meet.
+  apply conj_inv.
+  apply equiv_trans with ((~(<| s3 | s2 |> + <| s4 | s2 |>)) *
+                          (~(<| s3 | s1 |> + <| s4 | s1 |>))).
+  apply conj_mul.
+  apply equiv_trans with ((~ <| s3 | s1 |> + <| s4 | s1 |>) *
+                          (~ <| s3 | s2 |> + <| s4 | s2 |>)).
+  apply mul_comm.
+  apply equiv_trans with (((~ <| s3 | s1 |>) + (~ <| s4 | s1 |>)) *
+                          (~(<| s3 | s2 |> + <| s4 | s2 |>))).
+  apply mul_extensional.
+  apply conj_sum.
+  apply equiv_refl.
+  apply equiv_trans with (((~ <| s3 | s1 |>) + (~ <| s4 | s1 |>)) *
+                          ((~ <| s3 | s2 |>) + (~ <| s4 | s2 |>))).
+  apply mul_extensional.
+  apply equiv_refl.
+  apply conj_sum.
+  apply equiv_trans with ((<| s1 | s3 |> + (~ <| s4 | s1 |>)) *
+                          ((~ <| s3 | s2 |>) + (~ <| s4 | s2 |>))).
+  apply mul_extensional.
+  apply add_extensional.
+  apply equiv_sym.
+  apply inner_prod_conj_sym.
+  apply equiv_refl.
+  apply equiv_refl.
+  apply equiv_trans with ((<| s1 | s3 |> + <| s1 | s4 |>) *
+                          ((~ <| s3 | s2 |>) + (~ <| s4 | s2 |>))).
+  apply mul_extensional.
+  apply add_extensional.
+  apply equiv_refl.
+  apply equiv_sym.
+  apply inner_prod_conj_sym.
+  apply equiv_refl.
+  apply equiv_trans with ((<| s1 | s3 |> + <| s1 | s4 |>) *
+                          (<| s2 | s3 |> + (~ <| s4 | s2 |>))).
+  apply mul_extensional.
+  apply equiv_refl.
+  apply add_extensional.
+  apply equiv_sym.
+  apply inner_prod_conj_sym.
+  apply equiv_refl.
+  apply equiv_trans with ((<| s1 | s3 |> + <| s1 | s4 |>) *
+                          (<| s2 | s3 |> + <| s2 | s4 |>)).
+  apply mul_extensional.
+  apply equiv_refl.
+  apply add_extensional.
+  apply equiv_refl.
+  apply equiv_sym.
+  apply inner_prod_conj_sym.
+  apply equiv_refl.
 Qed.
 
 End InnerProdTheorems.
