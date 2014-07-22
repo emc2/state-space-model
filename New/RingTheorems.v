@@ -1,5 +1,3 @@
-Module RingTheorems.
-
 Require Import New.Ring.
 
 Lemma add_zero_left A
@@ -31,5 +29,3 @@ Proof.
   rewrite mul_comm.
   apply mul_one_right.
 Qed.
-
-End RingTheorems.
