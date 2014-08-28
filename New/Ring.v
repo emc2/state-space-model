@@ -29,9 +29,9 @@ Class SemiRingNoAssoc A
   add_comm : forall a b : A, a + b = b + a;
   mul_comm : forall a b : A, a * b = b * a;
   add_mul_dist : forall a b c : A, a * (b + c) = (a * b) + (a * c);
-  add_zero : forall a : A, a + 0 = a;
-  mul_zero : forall a : A, a * 0 = 0;
-  mul_one : forall a : A, a * 1 = a
+  add_zero_right : forall a : A, a + 0 = a;
+  mul_zero_right : forall a : A, a * 0 = 0;
+  mul_one_right : forall a : A, a * 1 = a
 }.
 
 Class RingNoAssoc A

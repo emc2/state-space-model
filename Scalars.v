@@ -1,5 +1,4 @@
 Require Import New.Complex.
-Require Import New.Equiv.
 Require Import New.Field.
 Require Import New.Ring.
 Require Import New.Order.
@@ -8,7 +7,6 @@ Require Import New.Order.
  * construction, but don't necessarily define i.
  *)
 Class ScalarOps A := {
-  equiv :> Equiv A;
   pord :> PartialOrder A;
   cops :> ComplexOps A;
   fops :> FieldOps A

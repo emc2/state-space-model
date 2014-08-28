@@ -1,24 +1,22 @@
-Require Import New.Equiv.
 Require Import New.Complex.
 Require Import New.Field.
 Require Import Scalars.
 
-Class StateOps E S
-  {scalar_equiv : Equiv S}
-  {scalar_cops : ComplexOps S}
-  {scalar_fops : FieldOps S} := {
-  equiv :> Equiv E;
-  cops :> ComplexOps E;
-  null : E;
-  meet : E -> E -> E;
-  join : E -> E -> E;
-  scalar_prod : S -> E -> E
+(* Fundamental operations on states. *)
+Class StateOps Scalar State
+  {scalar_cops : ComplexOps Scalar}
+  {scalar_fops : FieldOps Scalar} := {
+  cops :> ComplexOps State;
+  (* Null state *)
+  null : State;
+  meet : State -> State -> State;
+  join : State -> State -> State;
+  scalar_prod : Scalar -> State -> State
 }.
 
 (* All properties of states will be theorems *)
-Class States E S
-  {scalar_equiv : Equiv S}
-  {sops : ScalarOps S}
-  {state_ops : StateOps E S} := {
-  complex_st :> Complex E
+Class States Scalar State
+  {sops : ScalarOps Scalar}
+  {state_ops : StateOps Scalar State} := {
+  complex_st :> Complex State
 }.
