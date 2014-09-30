@@ -80,13 +80,13 @@ endif
 #                    #
 ######################
 
-VFILES:=Scalars.v States.v InnerProd.v InnerProdTheorems.v StateSpace.v New/Equiv.v New/Order.v New/Ring.v New/RingTheorems.v New/Field.v New/Complex.v
+VFILES:=Scalars.v StateTheorems.v States.v InnerProd.v InnerProdTheorems.v StateSpace.v New/Equiv.v New/Order.v New/Ring.v New/RingTheorems.v New/Field.v New/Complex.v
 
 -include $(addsuffix .d,$(VFILES))
 .SECONDARY: $(addsuffix .d,$(VFILES))
 
 VOFILES:=$(VFILES:.v=.vo)
-VOFILESINC=$(filter $(wildcard ./*),$(VOFILES)) 
+VOFILESINC=$(filter $(wildcard ./*),$(VOFILES))
 GLOBFILES:=$(VFILES:.v=.glob)
 VIFILES:=$(VFILES:.v=.vi)
 GFILES:=$(VFILES:.v=.g)
