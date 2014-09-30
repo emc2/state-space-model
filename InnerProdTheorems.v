@@ -1,5 +1,3 @@
-Module InnerProdTheorems.
-
 Require Import New.Complex.
 Require Import New.Ring.
 Require Import Scalars.
@@ -74,7 +72,7 @@ Proof.
   reflexivity.
 Qed.
 
-Lemma inner_prod_join_left Scalar State
+Lemma inner_prod_left_join Scalar State
   {scalarops : ScalarOps Scalar}
   {stateops : StateOps Scalar State}
   {innerprodop : InnerProdOp Scalar State}
@@ -89,5 +87,3 @@ Proof.
   rewrite <- 2! inner_prod_conj_sym.
   reflexivity.
 Qed.
-
-End InnerProdTheorems.
