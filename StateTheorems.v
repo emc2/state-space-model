@@ -4,14 +4,6 @@ Require Import Scalars.
 Require Import States.
 Require Import Coq.Sets.Ensembles.
 
-(* Helper used in proof of the induction principle over a basis. *)
-Definition P_if_basis
-  {Scalar} {State}
-  {sops : ScalarOps Scalar}
-  {state_ops : StateOps Scalar State}
-  (P : State -> Prop) (B : Ensemble State) (S : State) :=
-  state_basis B S -> P S.
-
 (* Induction theorem with basis sets.  Any inductive predicate P over
  * a basis B holds for all elements of any state S such that B is a
  * basis for S.
