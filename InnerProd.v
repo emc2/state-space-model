@@ -19,7 +19,7 @@ Class InnerProd Scalar Elem
   {scops : ScalarOps Scalar}
   {elem_sops : StateOps Scalar Elem}
   {inner_prod_ops : InnerProdOp Scalar Elem} := {
-  scalars_ip :> ScalarsNoAssoc Scalar;
+  scalars_ip :> Scalars Scalar;
   states_ip :> States Scalar Elem;
 
   (* Conjugate Symmetry of inner products *)
