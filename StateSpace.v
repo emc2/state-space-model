@@ -10,8 +10,8 @@ Require Import InnerProd.
 Class StateSpace Scalar State := {
   scalarops_ss :> ScalarOps Scalar;
   stateops_ss :> StateOps Scalar State;
-  innerprod_ss :> InnerProd Scalar State;
   innerprodop_ss :> InnerProdOp Scalar State;
+  innerprod_ss :> InnerProd Scalar State;
   inner_prod_ext_eq :
     forall (S1 S2 : State),
       (forall (S0 : State), <| S0 | S1 |> = <| S0 | S2 |>) -> S1 = S2
