@@ -1,7 +1,7 @@
 Require Import Coq.Setoids.Setoid.
 Require Import New.Ring.
 
-Lemma add_zero_left A
+Lemma add_zero_left {A}
   {srops : SemiRingOps A}
   {sra : SemiRingNoAssoc A} :
     forall a : A, 0 + a = a.
@@ -11,7 +11,7 @@ Proof.
   apply add_zero_right.
 Qed.
 
-Lemma mul_zero_left A
+Lemma mul_zero_left {A}
   {srops : SemiRingOps A}
   {sra : SemiRingNoAssoc A} :
     forall a : A, 0 * a = 0.
@@ -21,7 +21,7 @@ Proof.
   apply mul_zero_right.
 Qed.
 
-Lemma mul_one_left A
+Lemma mul_one_left {A}
   {srops : SemiRingOps A}
   {sra : SemiRingNoAssoc A} :
     forall a : A, 1 * a = a.
@@ -31,7 +31,7 @@ Proof.
   apply mul_one_right.
 Qed.
 
-Lemma neg_inv A
+Lemma neg_inv {A}
   {rops : RingOps A}
   {ra : Ring A} :
     forall a : A, - -a = a.
