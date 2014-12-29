@@ -3,6 +3,7 @@ Require Import New.Ring.
 Require Import New.RingTheorems.
 Require Import New.Field.
 
+(* Basic complex operations *)
 Class ComplexOps A := {
   complex_conj : A -> A
 }.
@@ -15,6 +16,13 @@ Class ComplexProps A {cops : ComplexOps A} := {
   complex_conj_ext : forall a b : A, a = b <-> (~ a) = (~ b)
 }.
 
+Class ComplexSemiRingProps A {cops : ComplexOps A} {srops : SemiRingOps A} := {
+  conj_sum : forall a b : A, (~ (a + b)) = (~ a) + (~ b);
+  conj_mul : forall a b : A, (~ (a * b)) = (~ b) * (~ a)
+}.
+
+
+(* Type which builds complex numbers out of an underlying type *)
 Record Complex A := {
   real_part : A;
   imaginary_part : A
@@ -77,7 +85,6 @@ Instance ComplexImplProps A {rops : RingOps A} {ra : Ring A} :
   complex_conj_ext := complex_conj_impl_ext
 }.
 
-
 Definition complex_zero {A} {rops : RingOps A} : Complex A :=
   {| real_part := 0; imaginary_part := 0 |}.
 
@@ -98,7 +105,7 @@ Function complex_add {A} {rops : SemiRingOps A} (x y : Complex A) :=
   {| real_part := real_part A x + real_part A y;
      imaginary_part := imaginary_part A x + imaginary_part A y |}.
 
-Lemma conj_sum {A} {rops : RingOps A} {rna : Ring A} :
+Lemma conj_impl_sum {A} {rops : RingOps A} {rna : Ring A} :
   forall a b : Complex A, complex_conj_impl (complex_add a b) =
                           complex_add (complex_conj_impl a) (complex_conj_impl b).
 Proof.
@@ -120,7 +127,7 @@ Function complex_mul {A} {rops : RingOps A} (x y : Complex A) :=
      imaginary_part := real_part A x * imaginary_part A y +
                        imaginary_part A x * real_part A y |}.
 
-Lemma conj_mul {A} {rops : RingOps A} {rna : Ring A} :
+Lemma conj_impl_mul {A} {rops : RingOps A} {rna : Ring A} :
   forall a b : Complex A, (complex_conj_impl (complex_mul a b)) =
                           complex_mul (complex_conj_impl b) (complex_conj_impl a).
 Proof.
@@ -157,6 +164,14 @@ Instance ComplexSemiRingOps A {rops : RingOps A} : SemiRingOps (Complex A) := {
   one := complex_one;
   add := complex_add;
   mul := complex_mul
+}.
+
+Instance ComplexImplSemiRingProps {A}
+  {rops : RingOps A}
+  {rna : Ring A} :
+  ComplexSemiRingProps (Complex A) := {
+  conj_sum := conj_impl_sum;
+  conj_mul := conj_impl_mul
 }.
 
 Function complex_sub {A} {rops : RingOps A} (x y : Complex A) :=
