@@ -18,7 +18,8 @@ Class ComplexProps A {cops : ComplexOps A} := {
 
 Class ComplexSemiRingProps A {cops : ComplexOps A} {srops : SemiRingOps A} := {
   conj_sum : forall a b : A, (~ (a + b)) = (~ a) + (~ b);
-  conj_mul : forall a b : A, (~ (a * b)) = (~ b) * (~ a)
+  conj_mul : forall a b : A, (~ (a * b)) = (~ b) * (~ a);
+  zero_self_conj : (~ 0) = 0
 }.
 
 
@@ -91,7 +92,7 @@ Definition complex_zero {A} {rops : RingOps A} : Complex A :=
 Definition complex_one {A} {rops : RingOps A} : Complex A :=
   {| real_part := 1; imaginary_part := 0 |}.
 
-Lemma zero_self_conj {A} {rops : RingOps A} {rna : Ring A} :
+Lemma complex_zero_self_conj {A} {rops : RingOps A} {rna : Ring A} :
   (complex_conj_impl complex_zero) = complex_zero.
 Proof.
   unfold complex_conj_impl.
@@ -171,7 +172,8 @@ Instance ComplexImplSemiRingProps {A}
   {rna : Ring A} :
   ComplexSemiRingProps (Complex A) := {
   conj_sum := conj_impl_sum;
-  conj_mul := conj_impl_mul
+  conj_mul := conj_impl_mul;
+  zero_self_conj := complex_zero_self_conj
 }.
 
 Function complex_sub {A} {rops : RingOps A} (x y : Complex A) :=
