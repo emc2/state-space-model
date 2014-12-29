@@ -37,6 +37,8 @@ Class SemiRingNoAssoc A
 Class RingNoAssoc A
   {rops : RingOps A} := {
   semiring_no_assoc_r :> SemiRingNoAssoc A;
+  neg_add : forall a b : A, -(a + b) = (-a) + (-b);
+  neg_mul : forall a b : A, -(a * b) = a * (-b);
   neg_add_inv : forall a : A, (- a) + a = 0
 }.
 
@@ -44,7 +46,7 @@ Class SemiRing A
   {rops : SemiRingOps A} := {
   semiring_no_assoc_s :> SemiRingNoAssoc A;
   add_assoc : forall a b c : A, a + (b + c) = (a + b) + c;
-  mul_assoc : forall a b c : A, a + (b * c) = (a * b) * c
+  mul_assoc : forall a b c : A, a * (b * c) = (a * b) * c
 }.
 
 Class Ring A
