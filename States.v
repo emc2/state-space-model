@@ -1,5 +1,5 @@
-Require Import New.Complex.
 Require Import New.Field.
+Require Import New.Complex.
 Require Import Scalars.
 Require Import Coq.Sets.Ensembles.
 
@@ -19,7 +19,7 @@ Class StateOps Scalar State
 Class States Scalar State
   {sops : ScalarOps Scalar}
   {state_ops : StateOps Scalar State} := {
-  complex_st :> Complex State
+  cprops_st :> ComplexProps State
 }.
 
 (* Is a set of states B a basis for state S, the inductive version *)
