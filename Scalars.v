@@ -14,12 +14,14 @@ Class ScalarOps A := {
 
 Class ScalarsNoAssoc A
   {scops : ScalarOps A} := {
-  complex_scna :> ComplexRing A;
+  ring_scna :> Ring A;
+  cprops_scna :> ComplexProps A;
   field_no_assoc_scna :> FieldNoAssoc A
 }.
 
 Class Scalars A
   {scops : ScalarOps A} := {
-  complex_sc :> ComplexRing A;
+  ring_sc :> Ring A;
+  cprops_sc :> ComplexProps A;
   field_sc :> Field A
 }.

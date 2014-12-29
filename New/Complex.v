@@ -3,22 +3,36 @@ Require Import New.Ring.
 Require Import New.RingTheorems.
 Require Import New.Field.
 
+Class ComplexOps A := {
+  complex_conj : A -> A
+}.
+
+(* Unorthodox notation *)
+Notation "~ x" := (complex_conj x).
+
+Class ComplexProps A {cops : ComplexOps A} := {
+  complex_conj_inv : forall (x : A), (~ (~ x)) = x;
+  complex_conj_ext : forall a b : A, a = b <-> (~ a) = (~ b)
+}.
+
 Record Complex A := {
   real_part : A;
   imaginary_part : A
 }.
 
-Function complex_conj {A} {rops : RingOps A} (x : Complex A) :=
+Function complex_conj_impl {A} {rops : RingOps A} (x : Complex A) :=
   {| real_part := real_part A x; imaginary_part := - imaginary_part A x |}.
 
-(* Unorthodox notation *)
-Notation "~ x" := (complex_conj x).
+Instance ComplexImplOps A {rops : RingOps A} {ra : Ring A} :
+  ComplexOps (Complex A) := {
+  complex_conj := complex_conj_impl
+}.
 
-Lemma complex_conj_inv {A} {rops : RingOps A} {ra : Ring A} :
-  forall a : Complex A, a = complex_conj (complex_conj a).
+Lemma complex_conj_impl_inv {A} {rops : RingOps A} {ra : Ring A} :
+  forall a : Complex A, complex_conj_impl (complex_conj_impl a) = a.
 Proof.
   intros.
-  unfold complex_conj.
+  unfold complex_conj_impl.
   elim a.
   intros.
   f_equal.
@@ -27,11 +41,11 @@ Proof.
   reflexivity.
 Qed.
 
-Lemma complex_conj_ext {A} {rops : RingOps A} {ra : Ring A} :
-  forall a b : Complex A, a = b <-> (complex_conj a) = (complex_conj b).
+Lemma complex_conj_impl_ext {A} {rops : RingOps A} {ra : Ring A} :
+  forall a b : Complex A, a = b <-> (complex_conj_impl a) = (complex_conj_impl b).
 Proof.
   intros.
-  unfold complex_conj.
+  unfold complex_conj_impl.
   elim a.
   elim b.
   unfold real_part.
@@ -57,16 +71,23 @@ Proof.
   assumption.
 Qed.
 
+Instance ComplexImplProps A {rops : RingOps A} {ra : Ring A} :
+  ComplexProps (Complex A) := {
+  complex_conj_inv := complex_conj_impl_inv;
+  complex_conj_ext := complex_conj_impl_ext
+}.
+
+
 Definition complex_zero {A} {rops : RingOps A} : Complex A :=
   {| real_part := 0; imaginary_part := 0 |}.
 
 Definition complex_one {A} {rops : RingOps A} : Complex A :=
   {| real_part := 1; imaginary_part := 0 |}.
 
-Lemma zero_self_conj {A} {rops : RingOps A} {rna : RingNoAssoc A} :
-  (~ complex_zero) = complex_zero.
+Lemma zero_self_conj {A} {rops : RingOps A} {rna : Ring A} :
+  (complex_conj_impl complex_zero) = complex_zero.
 Proof.
-  unfold complex_conj.
+  unfold complex_conj_impl.
   unfold complex_zero.
   unfold imaginary_part.
   f_equal.
@@ -77,11 +98,12 @@ Function complex_add {A} {rops : SemiRingOps A} (x y : Complex A) :=
   {| real_part := real_part A x + real_part A y;
      imaginary_part := imaginary_part A x + imaginary_part A y |}.
 
-Lemma conj_sum {A} {rops : RingOps A} {rna : RingNoAssoc A} :
-  forall a b : Complex A, (~(complex_add a b)) = complex_add (~a) (~b).
+Lemma conj_sum {A} {rops : RingOps A} {rna : Ring A} :
+  forall a b : Complex A, complex_conj_impl (complex_add a b) =
+                          complex_add (complex_conj_impl a) (complex_conj_impl b).
 Proof.
   intros.
-  unfold complex_conj.
+  unfold complex_conj_impl.
   unfold complex_add.
   elim a.
   elim b.
@@ -99,10 +121,11 @@ Function complex_mul {A} {rops : RingOps A} (x y : Complex A) :=
                        imaginary_part A x * real_part A y |}.
 
 Lemma conj_mul {A} {rops : RingOps A} {rna : Ring A} :
-  forall a b : Complex A, (~(complex_mul a b)) = complex_mul (~b) (~a).
+  forall a b : Complex A, (complex_conj_impl (complex_mul a b)) =
+                          complex_mul (complex_conj_impl b) (complex_conj_impl a).
 Proof.
   intros.
-  unfold complex_conj.
+  unfold complex_conj_impl.
   unfold complex_mul.
   elim a.
   elim b.
