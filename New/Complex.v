@@ -3,44 +3,39 @@ Require Import New.Ring.
 Require Import New.RingTheorems.
 Require Import New.Field.
 
-Class ComplexOps A := {
-  complex_conj : A -> A
+Record Complex A := {
+  real_part : A;
+  imaginary_part : A
 }.
+
+Function complex_conj {A} {rops : RingOps A} (x : Complex A) :=
+  {| real_part := real_part A x; imaginary_part := - imaginary_part A x |}.
 
 (* Unorthodox notation *)
 Notation "~ x" := (complex_conj x).
 
-Class Complex A
-  {cops : ComplexOps A} := {
-  conj_inv : forall a : A, a = ~ (~ a);
-  conj_ext : forall a b : A, a = b <-> (~a) = (~b)
-}.
-
-Function complex_conj_impl {A} {rops : RingOps A} (x : (A * A)) :=
-  let (x_r, x_i) := x in (x_r, - x_i).
-
-Instance ComplexOpsImpl A {rops : RingOps A} : ComplexOps (A * A) := {
-  complex_conj := complex_conj_impl
-}.
-
 Lemma complex_conj_inv {A} {rops : RingOps A} {ra : Ring A} :
-  forall a : (A * A), a = complex_conj_impl (complex_conj_impl a).
+  forall a : Complex A, a = complex_conj (complex_conj a).
 Proof.
   intros.
-  unfold complex_conj_impl.
+  unfold complex_conj.
   elim a.
   intros.
+  f_equal.
+  unfold imaginary_part.
   rewrite neg_inv.
   reflexivity.
 Qed.
 
-Lemma complex_conj_ext {A} {cops : ComplexOps A} {rops : RingOps A} {ra : Ring A} :
-  forall a b : (A * A), a = b <-> (complex_conj_impl a) = (complex_conj_impl b).
+Lemma complex_conj_ext {A} {rops : RingOps A} {ra : Ring A} :
+  forall a b : Complex A, a = b <-> (complex_conj a) = (complex_conj b).
 Proof.
   intros.
-  unfold complex_conj_impl.
+  unfold complex_conj.
   elim a.
   elim b.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   unfold iff.
   split.
@@ -62,38 +57,94 @@ Proof.
   assumption.
 Qed.
 
-Instance ComplexImpl A {cops : ComplexOps A} {rops : RingOps A} {ra : Ring A} :
-  Complex (A * A) := {
-  conj_inv := complex_conj_inv;
-  conj_ext := complex_conj_ext
-}.
+Definition complex_zero {A} {rops : RingOps A} : Complex A :=
+  {| real_part := 0; imaginary_part := 0 |}.
 
-Function complex_add {A} {rops : SemiRingOps A} (x y : (A * A)) :=
-  let (x_r, x_i) := x in
-    let (y_r, y_i) := y in
-      (x_r + y_r, x_i + y_i).
+Definition complex_one {A} {rops : RingOps A} : Complex A :=
+  {| real_part := 1; imaginary_part := 0 |}.
 
-Function complex_mul {A} {rops : RingOps A} (x y : (A * A)) :=
-  let (x_r, x_i) := x in
-    let (y_r, y_i) := y in
-      ((x_r * y_r) - (x_i * y_i), (x_r * y_i) + (x_i * y_r)).
+Lemma zero_self_conj {A} {rops : RingOps A} {rna : RingNoAssoc A} :
+  (~ complex_zero) = complex_zero.
+Proof.
+  unfold complex_conj.
+  unfold complex_zero.
+  unfold imaginary_part.
+  f_equal.
+  apply zero_self_inv.
+Qed.
 
-Instance ComplexSemiRingOps A {rops : RingOps A} : SemiRingOps (A * A) := {
-  zero := (zero, zero);
-  one := (one, zero);
+Function complex_add {A} {rops : SemiRingOps A} (x y : Complex A) :=
+  {| real_part := real_part A x + real_part A y;
+     imaginary_part := imaginary_part A x + imaginary_part A y |}.
+
+Lemma conj_sum {A} {rops : RingOps A} {rna : RingNoAssoc A} :
+  forall a b : Complex A, (~(complex_add a b)) = complex_add (~a) (~b).
+Proof.
+  intros.
+  unfold complex_conj.
+  unfold complex_add.
+  elim a.
+  elim b.
+  unfold real_part.
+  unfold imaginary_part.
+  intros.
+  f_equal.
+  apply neg_add.
+Qed.
+
+Function complex_mul {A} {rops : RingOps A} (x y : Complex A) :=
+  {| real_part := real_part A x * real_part A y -
+                  imaginary_part A x * imaginary_part A y;
+     imaginary_part := real_part A x * imaginary_part A y +
+                       imaginary_part A x * real_part A y |}.
+
+Lemma conj_mul {A} {rops : RingOps A} {rna : Ring A} :
+  forall a b : Complex A, (~(complex_mul a b)) = complex_mul (~b) (~a).
+Proof.
+  intros.
+  unfold complex_conj.
+  unfold complex_mul.
+  elim a.
+  elim b.
+  unfold real_part.
+  unfold imaginary_part.
+  intros.
+  f_equal.
+  rewrite mul_comm.
+  rewrite 2! sub_def.
+  apply add_extensional.
+  reflexivity.
+  rewrite <- neg_mul.
+  rewrite neg_inv.
+  rewrite mul_comm.
+  apply neg_mul_left.
+  rewrite <- neg_mul.
+  rewrite <- neg_mul_left.
+  rewrite neg_add.
+  rewrite add_comm.
+  rewrite mul_comm.
+  apply add_extensional.
+  reflexivity.
+  rewrite mul_comm.
+  reflexivity.
+Qed.
+
+Instance ComplexSemiRingOps A {rops : RingOps A} : SemiRingOps (Complex A) := {
+  zero := complex_zero;
+  one := complex_one;
   add := complex_add;
   mul := complex_mul
 }.
 
-Function complex_sub {A} {rops : RingOps A} (x y : (A * A)) :=
-  let (x_r, x_i) := x in
-    let (y_r, y_i) := y in (x_r - y_r, x_i - y_i).
+Function complex_sub {A} {rops : RingOps A} (x y : Complex A) :=
+  {| real_part := real_part A x - real_part A y;
+     imaginary_part := imaginary_part A x - imaginary_part A y |}.
 
-Function complex_neg {A} {rops : RingOps A} (x : (A * A)) :=
-  let (x_r, x_i) := x in (neg x_r, neg x_i).
+Function complex_neg {A} {rops : RingOps A} (x : Complex A) :=
+  {| real_part := - real_part A x; imaginary_part := - imaginary_part A x |}.
 
 Lemma complex_sub_def {A} {rops : RingOps A} :
-  forall x y, complex_sub x y = complex_add x (complex_neg y).
+  forall (x y : Complex A), complex_sub x y = complex_add x (complex_neg y).
 Proof.
   intros.
   unfold complex_add.
@@ -101,6 +152,8 @@ Proof.
   unfold complex_sub.
   elim x.
   elim y.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   apply sub_def.
@@ -108,17 +161,19 @@ Proof.
 Qed.
 
 Lemma complex_sub_zero {A} {rops : RingOps A} :
-  forall x, complex_sub x x = zero.
+  forall (x : Complex A), complex_sub x x = zero.
 Proof.
   intro.
   unfold complex_sub.
   elim x.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   rewrite 2! sub_zero.
   reflexivity.
 Qed.
 
-Instance ComplexRingOps A {rops : RingOps A} : RingOps (A * A) := {
+Instance ComplexRingOps A {rops : RingOps A} : RingOps (Complex A) := {
   rops := ComplexSemiRingOps A;
   sub := complex_sub;
   neg := complex_neg;
@@ -127,7 +182,7 @@ Instance ComplexRingOps A {rops : RingOps A} : RingOps (A * A) := {
 }.
 
 Lemma complex_add_extensional {A} {rops : RingOps A} :
-  forall x1 x2 y1 y2 : (A * A),
+  forall x1 x2 y1 y2 : (Complex A),
     x1 = x2 -> y1 = y2 -> complex_add x1 y1 = complex_add x2 y2.
 Proof.
   intros.
@@ -138,7 +193,7 @@ Proof.
 Qed.
 
 Lemma complex_mul_extensional {A} {rops : RingOps A} :
-  forall x1 x2 y1 y2 : (A * A),
+  forall x1 x2 y1 y2 : (Complex A),
     x1 = x2 -> y1 = y2 -> complex_mul x1 y1 = complex_mul x2 y2.
 Proof.
   intros.
@@ -149,7 +204,7 @@ Proof.
 Qed.
 
 Lemma complex_add_comm {A} {rops : RingOps A} {sring : SemiRingNoAssoc A} :
-  forall a b : (A * A), complex_add a b = complex_add b a.
+  forall a b : (Complex A), complex_add a b = complex_add b a.
 Proof.
   intros.
   unfold complex_add.
@@ -162,7 +217,7 @@ Proof.
 Qed.
 
 Lemma complex_mul_comm {A} {rops : RingOps A} {sring : SemiRingNoAssoc A} :
-  forall a b : (A * A), complex_mul a b = complex_mul b a.
+  forall a b : (Complex A), complex_mul a b = complex_mul b a.
 Proof.
   intros.
   unfold complex_mul.
@@ -182,7 +237,7 @@ Proof.
 Qed.
 
 Lemma complex_add_mul_dist {A} {rops : RingOps A} {ring : Ring A} :
-  forall a b c : (A * A),
+  forall a b c : (Complex A),
     complex_mul a (complex_add b c) =
     complex_add (complex_mul a b) (complex_mul a c).
 Proof.
@@ -192,48 +247,41 @@ Proof.
   elim a.
   elim b.
   elim c.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
-  replace (a2 * a1 - b2 * b1 + (a2 * a0 - b2 * b0)) with
-          (a2 * a1 + a2 * a0 - (b2 * b1 + b2 * b0)).
-  rewrite 2! sub_def.
-  apply add_extensional.
-  rewrite add_mul_dist.
-  reflexivity.
-  rewrite add_mul_dist.
-  reflexivity.
+  rewrite 2! add_mul_dist.
   rewrite 3! sub_def.
-  rewrite <- 2! add_assoc.
-  apply add_extensional.
-  reflexivity.
   rewrite neg_add.
   rewrite 2! add_assoc.
   apply add_extensional.
+  rewrite add_comm.
+  rewrite add_assoc.
+  apply add_extensional.
   apply add_comm.
   reflexivity.
-  replace (a2 * b1 + b2 * a1 + (a2 * b0 + b2 * a0)) with
-          (a2 * b1 + a2 * b0 + (b2 * a1 + b2 * a0)).
-  apply add_extensional.
-  rewrite add_mul_dist.
   reflexivity.
-  rewrite add_mul_dist.
-  reflexivity.
-  rewrite <- 2! add_assoc.
-  apply add_extensional.
-  reflexivity.
+  rewrite 2! add_mul_dist.
   rewrite 2! add_assoc.
   apply add_extensional.
+  rewrite add_comm.
+  rewrite add_assoc.
+  apply add_extensional.
   apply add_comm.
+  reflexivity.
   reflexivity.
 Qed.
 
 Lemma complex_add_zero {A} {rops : RingOps A} {sring : SemiRingNoAssoc A} :
-  forall a : (A * A), complex_add a (0, 0) = a.
+  forall a : (Complex A), complex_add a complex_zero = a.
 Proof.
   intros.
   unfold complex_add.
+  unfold complex_zero.
   elim a.
-  elim (0, 0).
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   apply add_zero_right.
@@ -241,11 +289,14 @@ Proof.
 Qed.
 
 Lemma complex_mul_zero {A} {rops : RingOps A} {sring : SemiRingNoAssoc A} :
-  forall a : (A * A), complex_mul a (0, 0) = (0, 0).
+  forall a : (Complex A), complex_mul a complex_zero = complex_zero.
 Proof.
   intros.
   unfold complex_mul.
+  unfold complex_zero.
   elim a.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   rewrite 2! mul_zero_right.
@@ -255,12 +306,14 @@ Proof.
 Qed.
 
 Lemma complex_mul_one {A} {rops : RingOps A} {ring : RingNoAssoc A} :
-  forall a : (A * A), complex_mul a (1, 0) = a.
+  forall a : (Complex A), complex_mul a complex_one = a.
 Proof.
   intros.
   unfold complex_mul.
+  unfold complex_one.
   elim a.
-  elim (1, 0).
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   rewrite mul_zero_right.
@@ -277,7 +330,7 @@ Qed.
 Instance ComplexSemiRingNoAssoc A
   {rops : RingOps A}
   {ring : Ring A} :
-  SemiRingNoAssoc (A * A) := {
+  SemiRingNoAssoc (Complex A) := {
   add_extensional := complex_add_extensional;
   mul_extensional := complex_mul_extensional;
   add_comm := complex_add_comm;
@@ -291,7 +344,7 @@ Instance ComplexSemiRingNoAssoc A
 Lemma complex_neg_add {A}
   {rops : RingOps A}
   {ring : RingNoAssoc A} :
-    forall a b : (A * A),
+    forall a b : (Complex A),
       complex_neg (complex_add a b) = complex_add (complex_neg a) (complex_neg b).
 Proof.
   intros.
@@ -299,6 +352,8 @@ Proof.
   unfold complex_add.
   elim a.
   elim b.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   apply neg_add.
@@ -308,7 +363,7 @@ Qed.
 Lemma complex_neg_mul {A}
   {rops : RingOps A}
   {ring : RingNoAssoc A} :
-    forall a b : (A * A),
+    forall a b : (Complex A),
       complex_neg (complex_mul a b) = complex_mul a (complex_neg b).
 Proof.
   intros.
@@ -316,6 +371,8 @@ Proof.
   unfold complex_mul.
   elim a.
   elim b.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   rewrite <- 2! neg_mul.
@@ -325,12 +382,15 @@ Proof.
 Qed.
 
 Lemma complex_neg_add_inv {A} {rops : RingOps A} {ring : RingNoAssoc A} :
-  forall a : (A * A), complex_add (complex_neg a) a = (0, 0).
+  forall a : (Complex A), complex_add (complex_neg a) a = complex_zero.
 Proof.
   intro.
   unfold complex_add.
   unfold complex_neg.
+  unfold complex_zero.
   elim a.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   rewrite add_comm.
@@ -345,7 +405,7 @@ Qed.
 Instance ComplexRingNoAssoc A
   {rops : RingOps A}
   {ring : Ring A} :
-  RingNoAssoc (A * A) := {
+  RingNoAssoc (Complex A) := {
   semiring_no_assoc_r := ComplexSemiRingNoAssoc A;
   neg_add := complex_neg_add;
   neg_mul := complex_neg_mul;
@@ -353,7 +413,7 @@ Instance ComplexRingNoAssoc A
 }.
 
 Lemma complex_add_assoc {A} {rops : RingOps A} {sring : SemiRing A} :
-  forall a b c : (A * A),
+  forall a b c : (Complex A),
     complex_add a (complex_add b c) = complex_add (complex_add a b) c.
 Proof.
   intros.
@@ -368,7 +428,7 @@ Proof.
 Qed.
 
 Lemma complex_mul_assoc {A} {rops : RingOps A} {ring : Ring A} :
-  forall a b c : (A * A),
+  forall a b c : (Complex A),
     complex_mul a (complex_mul b c) = complex_mul (complex_mul a b) c.
 Proof.
   intros.
@@ -376,6 +436,8 @@ Proof.
   elim a.
   elim b.
   elim c.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   rewrite add_mul_dist.
@@ -414,7 +476,7 @@ Qed.
 Instance ComplexSemiRing A
   {rops : RingOps A}
   {ring : Ring A} :
-  SemiRing (A * A) := {
+  SemiRing (Complex A) := {
   semiring_no_assoc_s := ComplexSemiRingNoAssoc A;
   add_assoc := complex_add_assoc;
   mul_assoc := complex_mul_assoc
@@ -423,31 +485,41 @@ Instance ComplexSemiRing A
 Instance ComplexRing A
   {rops : RingOps A}
   {ring : Ring A} :
-  Ring (A * A) := {
+  Ring (Complex A) := {
   semiring_r := ComplexSemiRing A;
   ring_noassoc := ComplexRingNoAssoc A
 }.
 
-Function complex_recip {A} {rops : FieldOps A} (x : (A * A)) :=
-  let (x_r, x_i) := x in (x_r / (x_r * x_r + x_i * x_i),
-                          -x_i / (x_r * x_r + x_i * x_i)).
+Function complex_recip {A} {rops : FieldOps A} (x : (Complex A)) :=
+  {| real_part :=
+       real_part A x / (real_part A x * real_part A x +
+                        imaginary_part A x *imaginary_part A x);
+     imaginary_part :=
+       - imaginary_part A x / (real_part A x * real_part A x +
+                               imaginary_part A x *imaginary_part A x) |}.
 
-Function complex_div {A} {rops : FieldOps A} (x y : (A * A)) :=
-  let (x_r, x_i) := x in
-    let (y_r, y_i) := y in
-      ((x_r * y_r + x_i * y_i) / (y_r * y_r + y_i * y_i),
-       (y_r * x_i - x_r * y_i) / (y_r * y_r + y_i * y_i)).
+Function complex_div {A} {rops : FieldOps A} (x y : (Complex A)) :=
+  {| real_part :=
+       (real_part A x * real_part A y +
+        imaginary_part A x * imaginary_part A y) /
+       (real_part A y * real_part A y +
+        imaginary_part A y *imaginary_part A y);
+     imaginary_part :=
+       (real_part A y * imaginary_part A x -
+        real_part A x * imaginary_part A y) /
+       (real_part A y * real_part A y +
+        imaginary_part A y *imaginary_part A y) |}.
 
 Instance ComplexFieldOps A
   {rops : FieldOps A} :
-  FieldOps (A * A) := {
+  FieldOps (Complex A) := {
   rops := ComplexRingOps A;
   div := complex_div;
   recip := complex_recip
 }.
 
 Lemma complex_div_def {A} {rops : FieldOps A} {field : Field A} :
-  forall x y, complex_div x y = complex_mul x (complex_recip y).
+  forall (x y : Complex A), complex_div x y = complex_mul x (complex_recip y).
 Proof.
   intros.
   unfold complex_div.
@@ -455,6 +527,8 @@ Proof.
   unfold complex_mul.
   elim x.
   elim y.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   rewrite 3! div_def.
@@ -475,13 +549,16 @@ Proof.
 Qed.
 
 Lemma complex_recip_mul_inv {A} {rops : FieldOps A} {field : Field A} :
-  forall a : (A * A), complex_mul (complex_recip a) a = (1, 0).
+  forall a : (Complex A), complex_mul (complex_recip a) a = complex_one.
 Proof.
   intros.
   rewrite complex_mul_comm.
   rewrite <- complex_div_def.
   unfold complex_div.
+  unfold complex_one.
   elim a.
+  unfold real_part.
+  unfold imaginary_part.
   intros.
   f_equal.
   rewrite div_def.
@@ -495,7 +572,7 @@ Qed.
 Instance ComplexFieldAxioms A
   {rops : FieldOps A}
   {field : Field A} :
-  FieldAxioms (A * A) := {
+  FieldAxioms (Complex A) := {
   div_def := complex_div_def;
   recip_mul_inv := complex_recip_mul_inv
 }.
@@ -503,7 +580,7 @@ Instance ComplexFieldAxioms A
 Instance ComplexFieldNoAssoc A
   {fops : FieldOps A}
   {field : Field A} :
-  FieldNoAssoc (A * A) := {
+  FieldNoAssoc (Complex A) := {
   ring_no_assoc_fna := ComplexRingNoAssoc A;
   axioms_fna := ComplexFieldAxioms A
 }.
@@ -511,7 +588,7 @@ Instance ComplexFieldNoAssoc A
 Instance ComplexField A
   {fops : FieldOps A}
   {field : Field A} :
-  Field (A * A) := {
+  Field (Complex A) := {
   ring_f := ComplexRing A;
   axioms_f := ComplexFieldAxioms A
 }.
