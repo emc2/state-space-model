@@ -16,6 +16,7 @@ Class ScalarsNoAssoc A
   {scops : ScalarOps A} := {
   ring_scna :> Ring A;
   cprops_scna :> ComplexProps A;
+  csrprops_scna :> ComplexSemiRingProps A;
   field_no_assoc_scna :> FieldNoAssoc A
 }.
 
@@ -23,5 +24,6 @@ Class Scalars A
   {scops : ScalarOps A} := {
   ring_sc :> Ring A;
   cprops_sc :> ComplexProps A;
+  csrprops_sc :> ComplexSemiRingProps A;
   field_sc :> Field A
 }.
