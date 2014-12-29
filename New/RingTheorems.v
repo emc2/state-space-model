@@ -94,3 +94,12 @@ Proof.
   apply mul_comm.
   apply mul_comm.
 Qed.
+
+Lemma neg_mul_left {A} {srops : RingOps A} {sra : RingNoAssoc A} :
+  forall a b : A, -(a * b) = (-a) * b.
+Proof.
+  intros.
+  rewrite mul_comm.
+  rewrite neg_mul.
+  apply mul_comm.
+Qed.
