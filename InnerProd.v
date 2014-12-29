@@ -36,6 +36,10 @@ Class InnerProd Scalar Elem
   (* Conjugate distribution of inner products *)
   inner_prod_conj_dist : forall s1 s2 : Elem, <| ~s1 | ~s2 |> = ~<| s2 | s1 |>;
 
+  (* Conjugate equality *)
+  inner_prod_conj_ext : forall s1 s2 s : Elem,
+    <| s | s1 |> = <| s | s2 |> -> <| ~s | s1 |> = <| ~s | s2 |>;
+
   (* Homogeneity of inner products *)
   inner_prod_right_homogeneous :
     forall (s1 s2 : Elem) (a : Scalar),

@@ -63,10 +63,8 @@ Proof.
   exact innerprod_ss.
   split.
   intros.
-  (* Appeal to actual definitions of complex numbers, which I haven't
-   * developed here yet.  Eventually develop them, come back, and get rid
-   * of this. *)
-  admit.
+  apply inner_prod_conj_ext.
+  assumption.
   rewrite 2! inner_prod_left_strict.
   reflexivity.
   exact innerprod_ss.
