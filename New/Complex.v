@@ -1,6 +1,7 @@
 Require Import Coq.Setoids.Setoid.
 Require Import New.Ring.
 Require Import New.RingTheorems.
+Require Import New.Field.
 
 Class ComplexOps A := {
   complex_conj : A -> A
@@ -29,7 +30,7 @@ Proof.
   unfold complex_conj_impl.
   elim a.
   intros.
-  rewrite (neg_inv A).
+  rewrite neg_inv.
   reflexivity.
 Qed.
 
@@ -55,8 +56,8 @@ Proof.
   intros.
   f_equal.
   assumption.
-  rewrite <- (neg_inv A).
-  rewrite <- (neg_inv A) at 1.
+  rewrite <- neg_inv.
+  rewrite <- neg_inv at 1.
   f_equal.
   assumption.
 Qed.
@@ -425,4 +426,92 @@ Instance ComplexRing A
   Ring (A * A) := {
   semiring_r := ComplexSemiRing A;
   ring_noassoc := ComplexRingNoAssoc A
+}.
+
+Function complex_recip {A} {rops : FieldOps A} (x : (A * A)) :=
+  let (x_r, x_i) := x in (x_r / (x_r * x_r + x_i * x_i),
+                          -x_i / (x_r * x_r + x_i * x_i)).
+
+Function complex_div {A} {rops : FieldOps A} (x y : (A * A)) :=
+  let (x_r, x_i) := x in
+    let (y_r, y_i) := y in
+      ((x_r * y_r + x_i * y_i) / (y_r * y_r + y_i * y_i),
+       (y_r * x_i - x_r * y_i) / (y_r * y_r + y_i * y_i)).
+
+Instance ComplexFieldOps A
+  {rops : FieldOps A} :
+  FieldOps (A * A) := {
+  rops := ComplexRingOps A;
+  div := complex_div;
+  recip := complex_recip
+}.
+
+Lemma complex_div_def {A} {rops : FieldOps A} {field : Field A} :
+  forall x y, complex_div x y = complex_mul x (complex_recip y).
+Proof.
+  intros.
+  unfold complex_div.
+  unfold complex_recip.
+  unfold complex_mul.
+  elim x.
+  elim y.
+  intros.
+  f_equal.
+  rewrite 3! div_def.
+  rewrite 2! mul_assoc.
+  rewrite <- sub_mul_dist_right.
+  rewrite <- neg_mul.
+  rewrite sub_def.
+  rewrite neg_inv.
+  reflexivity.
+  rewrite 3! div_def.
+  rewrite 2! mul_assoc.
+  rewrite <- add_mul_dist_right.
+  f_equal.
+  rewrite add_comm.
+  rewrite <- neg_mul.
+  rewrite mul_comm at 1.
+  apply sub_def.
+Qed.
+
+Lemma complex_recip_mul_inv {A} {rops : FieldOps A} {field : Field A} :
+  forall a : (A * A), complex_mul (complex_recip a) a = (1, 0).
+Proof.
+  intros.
+  rewrite complex_mul_comm.
+  rewrite <- complex_div_def.
+  unfold complex_div.
+  elim a.
+  intros.
+  f_equal.
+  rewrite div_def.
+  rewrite mul_comm.
+  apply recip_mul_inv.
+  rewrite sub_zero.
+  rewrite div_def.
+  apply mul_zero_left.
+Qed.
+
+Instance ComplexFieldAxioms A
+  {rops : FieldOps A}
+  {field : Field A} :
+  FieldAxioms (A * A) := {
+  div_def := complex_div_def;
+  recip_mul_inv := complex_recip_mul_inv
+}.
+
+Instance ComplexFieldNoAssoc A
+  {fops : FieldOps A}
+  {field : Field A} :
+  FieldNoAssoc (A * A) := {
+  ring_no_assoc_fna := ComplexRingNoAssoc A;
+  axioms_fna := ComplexFieldAxioms A
+}.
+
+Instance ComplexField A
+  {fops : FieldOps A}
+  {field : Field A} :
+  Field (A * A) := {
+  ring_f := ComplexRing A;
+  axioms_f := ComplexFieldAxioms A
 }.
